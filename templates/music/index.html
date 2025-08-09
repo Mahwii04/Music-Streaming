@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Songs{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('music.upload') }}">Upload New Song</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for song in songs %}
+    <article class="song">
+      <header>
+        <div>
+          <h1>{{ song['title'] }}</h1>
+          <div class="about">by {{ song['artist'] }} on {{ song['username'] }}</div>
+        </div>
+      </header>
+      <audio controls>
+        <source src="{{ url_for('music.uploaded_file', filename=song['file_path']) }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </article>
+  {% endfor %}
+{% endblock %}

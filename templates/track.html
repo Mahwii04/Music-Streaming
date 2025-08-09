@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="track-page">
+    <div class="left">
+      <h2>{{ track.title }}</h2>
+      <div class="meta">By <a href="{{ url_for('profile', username=track.owner.username) }}">{{ track.owner.username }}</a> • {{ track.duration }}s</div>
+      <div class="player">
+        <audio id="main-player" controls preload="none" src="{{ url_for('stream', track_id=track.id) }}"></audio>
+        <div class="player-actions">
+          {% if current_user.is_authenticated %}
+            <button id="like-btn" class="btn-like">{{ 'Unlike' if current_user.is_authenticated and current_user in track.liked_by else 'Like' }}</button>
+            {% if is_favorited %}
+              <button id="fav-btn" class="btn">Unfavorite</button>
+            {% else %}
+              <button id="fav-btn" class="btn">Favorite</button>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      <p class="desc">{{ track.description }}</p>
+      <hr>
+      <h3 id="comments">Comments</h3>
+      {% for c in comments %}
+        <div class="comment">
+          <strong>{{ c.user.username }}</strong> <small>{{ c.created_at.strftime("%Y-%m-%d %H:%M") }}</small>
+          <p>{{ c.body }}</p>
+        </div>
+      {% endfor %}
+      {% if current_user.is_authenticated %}
+        <form action="{{ url_for('comment', track_id=track.id) }}" method="post">
+          {{ comment_form.hidden_tag() }}
+          {{ comment_form.body }}
+          {{ comment_form.submit }}
+        </form>
+      {% endif %}
+    </div>
+    <aside class="right">
+      <div class="card small">
+        <h4>About Artist</h4>
+        <a href="{{ url_for('profile', username=track.owner.username) }}">
+          <img class="avatar-lg" src="{{ url_for('profile', username=track.owner.username) }}?avatar=1">
+        </a>
+        <p class="muted">{{ track.owner.bio or "No bio yet" }}</p>
+        {% if current_user.is_authenticated and current_user.id != track.owner.id %}
+          <form id="follow-form" action="{{ url_for('follow', user_id=track.owner.id) }}" method="post">
+            <button id="follow-btn" type="button" class="btn">{{ 'Following' if is_following else 'Follow' }}</button>
+          </form>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const likeBtn = document.getElementById("like-btn");
+    const favBtn = document.getElementById("fav-btn");
+    if (likeBtn) {
+      likeBtn.addEventListener("click", async () => {
+        const resp = await fetch("{{ url_for('like', track_id=track.id) }}", {method:"POST"});
+        location.reload();
+      });
+    }
+    if (favBtn) {
+      favBtn.addEventListener("click", async () => {
+        const url = favBtn.textContent.includes("Un") ? "{{ url_for('unfavorite', track_id=track.id) }}" : "{{ url_for('favorite', track_id=track.id) }}";
+        await fetch(url, {method:"POST"});
+        location.reload();
+      });
+    }
+    const followBtn = document.getElementById("follow-btn");
+    if (followBtn) {
+      followBtn.addEventListener("click", async () => {
+        let url = "{{ url_for('follow', user_id=track.owner.id) }}";
+        if (followBtn.textContent.includes("Following")) {
+          url = "{{ url_for('unfollow', user_id=track.owner.id) }}";
+        }
+        await fetch(url, {method:"POST"});
+        location.reload();
+      });
+    }
+  </script>
+{% endblock %}

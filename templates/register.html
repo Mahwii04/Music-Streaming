@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="center-card">
+    <h2>Create an account</h2>
+    <form method="post">
+      {{ form.hidden_tag() }}
+      <label>Username</label>{{ form.username }}
+      <label>Email</label>{{ form.email }}
+      <label>Password</label>{{ form.password }}
+      <label>Confirm</label>{{ form.password2 }}
+      <div class="form-actions">{{ form.submit }}</div>
+    </form>
+  </div>
+{% endblock %}

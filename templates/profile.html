@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="profile-hero">
+    <img class="profile-avatar" src="{{ url_for('profile', username=profile_user.username) }}?avatar=1">
+    <h2>{{ profile_user.username }}</h2>
+    <p class="muted">{{ profile_user.bio or "No bio set" }}</p>
+    <p>{{ profile_user.followers|length }} followers • {{ profile_user.following|length }} following</p>
+
+    {% if current_user.is_authenticated and current_user.id != profile_user.id %}
+      <button id="follow-btn">{{ "Unfollow" if is_following else "Follow" }}</button>
+    {% endif %}
+  </div>
+
+  <h3>Tracks</h3>
+  <div class="grid">
+    {% for t in tracks %}
+      <div class="card">
+        <div class="card-body">
+          <a href="{{ url_for('track', track_id=t.id) }}">{{ t.title }}</a>
+          <div class="meta">{{ t.duration }}s • {{ t.created_at.strftime("%Y-%m-%d") }}</div>
+          <audio class="mini-player" data-src="{{ url_for('preview', track_id=t.id) }}"></audio>
+        </div>
+      </div>
+    {% else %}
+      <p class="muted">No tracks yet.</p>
+    {% endfor %}
+  </div>
+
+  <script>
+    const followBtn = document.getElementById("follow-btn");
+    if (followBtn) {
+      followBtn.addEventListener("click", async () => {
+        const action = followBtn.textContent.includes("Un") ? "unfollow" : "follow";
+        const url = `/${action}/{{ profile_user.id }}`;
+        await fetch(url, {method:"POST"});
+        location.reload();
+      });
+    }
+  </script>
+{% endblock %}

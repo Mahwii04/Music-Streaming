@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Upload a track</h2>
+  <form method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <label>Title</label>{{ form.title }}
+    <label>Description</label>{{ form.description }}
+    <label>Track file</label>{{ form.track }}
+    <div class="form-actions">{{ form.submit }}</div>
+  </form>
+  <p class="muted">We transcode uploads to MP3 for universal streaming and create a {{ config.PREVIEW_DURATION }}s preview clip.</p>
+{% endblock %}

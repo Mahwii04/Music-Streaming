@@ -1,0 +1,81 @@
+:root{
+  --bg:#fffaf6;
+  --soft:#f2e9e4;
+  --muted:#6c6c6c;
+  --accent:#7cc7ff;
+  --accent-2:#f8b4d9;
+  --card:#ffffff;
+  --radius:14px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+body.bg-soft{
+  background: linear-gradient(180deg, #fffaf6 0%, #fdf7fb 100%);
+  color:#1a1a1a;
+  margin:0;
+  min-height:100vh;
+}
+.container{
+  width:95%;
+  max-width:1100px;
+  margin:0 auto;
+  padding:24px 0;
+}
+.topbar{
+  background:transparent;
+  padding:12px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.brand{
+  font-weight:700;
+  font-size:20px;
+  text-decoration:none;
+  margin-right:16px;
+  color:#2b2b2b;
+}
+.nav{
+  float:right;
+}
+.search input{
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,0.06);
+}
+.search button{ display:none; }
+
+.page-title{ font-size:24px; margin:8px 0 20px; }
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:16px;
+}
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:12px;
+  box-shadow: 0 6px 16px rgba(21,30,40,0.06);
+}
+.card-media img.avatar-thumb{
+  width:60px;height:60px;border-radius:10px;object-fit:cover;
+}
+.card-body .track-title{ font-weight:700; display:block; margin-bottom:6px; color:#111; text-decoration:none; }
+.meta{ color:var(--muted); font-size:13px; }
+.btn{ padding:8px 12px; border-radius:10px; border:none; background:#f3f4f6; cursor:pointer; }
+.btn-play{ background:var(--accent); color:#fff; border:none; padding:8px 12px; border-radius:10px; }
+
+.center-card{ max-width:420px; margin:40px auto; padding:20px; background:var(--card); border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,0.06); }
+.form-actions{ margin-top:12px; }
+
+.track-page{ display:grid; grid-template-columns: 1fr 300px; gap:18px; }
+.player{ margin:12px 0; }
+
+.avatar-lg{ width:120px;height:120px;border-radius:18px;object-fit:cover; }
+.profile-hero{ text-align:center; padding:18px; background:linear-gradient(180deg,#fff,#fffaf6); border-radius:12px; margin-bottom:18px; }
+
+.comment{ border-left:2px solid rgba(0,0,0,0.04); padding:8px 12px; margin-bottom:8px; }
+
+.muted{ color:var(--muted); font-size:14px; }
+.flashwrap .flash{ padding:8px 12px; border-radius:8px; margin-bottom:8px; }
+.flash.success{ background:#ecfdf3; color:#0f5132; }
+.flash.danger{ background:#fff5f5; color:#842029; }
+.footer{ padding:24px 0; text-align:center; color:var(--muted); margin-top:48px; }

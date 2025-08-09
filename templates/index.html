@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Home - Ocean Music{% endblock %}
+{% block content %}
+  <h1 class="page-title">Fresh tracks</h1>
+  <div class="grid">
+    {% for t in tracks.items %}
+      <div class="card">
+        <div class="card-media">
+          <img src="{{ url_for('profile', username=t.owner.username) }}?avatar=1" alt="{{ t.owner.username }} avatar" class="avatar-thumb">
+        </div>
+        <div class="card-body">
+          <a class="track-title" href="{{ url_for('track', track_id=t.id) }}">{{ t.title }}</a>
+          <div class="meta">by <a href="{{ url_for('profile', username=t.owner.username) }}">{{ t.owner.username }}</a> • {{ t.duration }}s</div>
+          <audio class="mini-player" data-src="{{ url_for('preview', track_id=t.id) }}"></audio>
+          <div class="card-actions">
+            <button class="btn-play" data-src="{{ url_for('stream', track_id=t.id) }}">Play</button>
+            <a class="btn" href="{{ url_for('track', track_id=t.id) }}">Open</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="pagination">
+    {% if tracks.has_prev %}
+      <a href="{{ url_for('index', page=tracks.prev_num) }}">Prev</a>
+    {% endif %}
+    Page {{ tracks.page }} of {{ tracks.pages }}
+    {% if tracks.has_next %}
+      <a href="{{ url_for('index', page=tracks.next_num) }}">Next</a>
+    {% endif %}
+  </div>
+{% endblock %}
