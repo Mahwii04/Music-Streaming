@@ -67,6 +67,7 @@ class Track(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), index=True)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, default="")
+    thumbnail = db.Column(db.String(200), nullable=True)
     duration = db.Column(db.Integer, default=0)  # duration in seconds
     mime_type = db.Column(db.String(80), default="audio/mpeg")
     original_filename = db.Column(db.String(255))

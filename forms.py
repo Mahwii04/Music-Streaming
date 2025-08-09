@@ -20,6 +20,7 @@ class UploadForm(FlaskForm):
     title = StringField("Title", validators=[Optional(), Length(max=255)])
     description = TextAreaField("Description", validators=[Optional(), Length(max=2000)])
     track = FileField("Upload track", validators=[FileRequired(), FileAllowed(["mp3", "wav", "flac", "m4a", "ogg", "aac"], "Audio files only!")])
+    thumbnail = FileField('Thumbnail Image', validators=[FileAllowed(['jpg', 'jpeg', 'png'])])
     submit = SubmitField("Upload")
 
 class ProfileForm(FlaskForm):

@@ -111,7 +111,7 @@ def profile(username):
         flash("Profile updated", "success")
         return redirect(url_for("profile", username=current_user.username))
     tracks = Track.query.filter_by(owner_id=user.id).order_by(Track.created_at.desc()).all()
-    return render_template("profile.html", profile_user=user, is_following=is_following, form=form, tracks=tracks)
+    return render_template("profile.html", profile_user=user, is_following=is_following, form=form, tracks=tracks, user=user)
 
 @app.route("/follow/<int:user_id>", methods=["POST"])
 @login_required
@@ -145,12 +145,32 @@ def upload():
         if not allowed_file(f.filename, app.config["ALLOWED_EXTENSIONS"]):
             flash("File type not allowed.", "danger")
             return redirect(url_for("upload"))
+        
+        # Handle thumbnail upload
+        thumbnail_filename = None
+        if form.thumbnail.data:
+            if allowed_file(form.thumbnail.data.filename, {"jpg", "jpeg", "png"}):
+                thumbnail_filename = secure_filename(form.thumbnail.data.filename)
+                thumbnail_path = os.path.join(app.config['UPLOAD_FOLDER'], thumbnail_filename)
+                form.thumbnail.data.save(thumbnail_path)
+            else:
+                flash("Thumbnail must be a JPG or PNG image.", "danger")
+                return redirect(url_for("upload"))
+
         # secure & visible meta
         filename = secure_filename(f.filename)
         title = form.title.data or filename.rsplit(".", 1)[0]
-        track = Track(owner_id=current_user.id, title=title, description=form.description.data)
+        
+        track = Track(
+            owner_id=current_user.id,
+            title=title,
+            description=form.description.data,
+            thumbnail=thumbnail_filename  # save thumbnail filename in DB
+        )
+
         db.session.add(track)
-        db.session.flush()  # get id
+        db.session.flush()  # get id before committing
+
         try:
             # process upload: store original + generate mp3 + preview clip
             process_track_upload(track, f, app)
@@ -163,7 +183,9 @@ def upload():
             storage_delete(track, app)
             app.logger.exception("Upload failed")
             flash("Upload failed: " + str(e), "danger")
+
     return render_template("upload.html", form=form)
+
 
 @app.route("/track/<int:track_id>")
 def track(track_id):

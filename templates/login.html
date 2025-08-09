@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="center-card">
-    <h2>Welcome back</h2>
-    <form method="post">
-      {{ form.hidden_tag() }}
-      <label>Email</label>{{ form.email }}
-      <label>Password</label>{{ form.password }}
-      <div class="row">
-        {{ form.remember }} Remember me
-      </div>
-      <div class="form-actions">{{ form.submit }}</div>
+<div class="container">
+    <h2>Login</h2>
+    <form method="POST" action="{{ url_for('login') }}">
+        {{ form.hidden_tag() }}
+        {{ form.email.label }} {{ form.email }}
+        {{ form.password.label }} {{ form.password }}
+        <button type="submit" class="btn">Login</button>
     </form>
-  </div>
+    <p style="text-align:center; margin-top: 10px;">
+        Don't have an account? <a href="{{ url_for('register') }}" style="color:#ff69b4;">Sign up</a>
+    </p>
+</div>
 {% endblock %}

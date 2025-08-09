@@ -1,33 +1,63 @@
 {% extends "base.html" %}
-{% block title %}Home - Ocean Music{% endblock %}
+{% block title %}Home — PinkTunes{% endblock %}
+
 {% block content %}
-  <h1 class="page-title">Fresh tracks</h1>
+<div class="page container">
+  <h1 class="page-title">Discover music</h1>
+  <p class="subtitle">Stream previews and open full tracks to listen.</p>
+
+  {# make template robust whether tracks is a pagination or plain list #}
+  {% if tracks is defined and tracks.items is defined %}
+    {% set items = tracks.items %}
+  {% else %}
+    {% set items = tracks %}
+  {% endif %}
+
+  {% if items|length == 0 %}
+    <div class="empty">No tracks uploaded yet.</div>
+  {% endif %}
+
   <div class="grid">
-    {% for t in tracks.items %}
-      <div class="card">
-        <div class="card-media">
-          <img src="{{ url_for('profile', username=t.owner.username) }}?avatar=1" alt="{{ t.owner.username }} avatar" class="avatar-thumb">
-        </div>
-        <div class="card-body">
-          <a class="track-title" href="{{ url_for('track', track_id=t.id) }}">{{ t.title }}</a>
-          <div class="meta">by <a href="{{ url_for('profile', username=t.owner.username) }}">{{ t.owner.username }}</a> • {{ t.duration }}s</div>
-          <audio class="mini-player" data-src="{{ url_for('preview', track_id=t.id) }}"></audio>
-          <div class="card-actions">
-            <button class="btn-play" data-src="{{ url_for('stream', track_id=t.id) }}">Play</button>
-            <a class="btn" href="{{ url_for('track', track_id=t.id) }}">Open</a>
+    {% for track in items %}
+      <article class="music-card" aria-label="track {{ track.title }}">
+        <div class="card-head">
+          <div class="title-group">
+            <a class="track-title" href="{{ url_for('track', track_id=track.id) }}">{{ track.title }}</a>
+            <div class="meta">by <a href="{{ url_for('profile', username=track.owner.username) }}">{{ track.owner.username }}</a> • {{ track.duration }}s</div>
           </div>
         </div>
-      </div>
+
+        <div class="card-media">
+          <audio class="preview-audio" controls preload="none">
+            <source src="{{ url_for('preview', track_id=track.id) }}" type="audio/mpeg">
+            Your browser does not support audio playback.
+          </audio>
+        </div>
+
+        <div class="card-actions">
+          <a class="btn" href="{{ url_for('track', track_id=track.id) }}">
+            <!-- open SVG icon -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+              <path d="M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Open
+          </a>
+        </div>
+      </article>
     {% endfor %}
   </div>
 
-  <div class="pagination">
-    {% if tracks.has_prev %}
-      <a href="{{ url_for('index', page=tracks.prev_num) }}">Prev</a>
-    {% endif %}
-    Page {{ tracks.page }} of {{ tracks.pages }}
-    {% if tracks.has_next %}
-      <a href="{{ url_for('index', page=tracks.next_num) }}">Next</a>
-    {% endif %}
-  </div>
+  {% if tracks is defined and tracks.pages is defined %}
+    <nav class="pagination">
+      {% if tracks.has_prev %}
+        <a class="page-link" href="{{ url_for('index', page=tracks.prev_num) }}">Prev</a>
+      {% endif %}
+      <span class="page-current">Page {{ tracks.page }} of {{ tracks.pages }}</span>
+      {% if tracks.has_next %}
+        <a class="page-link" href="{{ url_for('index', page=tracks.next_num) }}">Next</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+</div>
 {% endblock %}

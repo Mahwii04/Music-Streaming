@@ -1,52 +1,64 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{% block title %}Ocean Music{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
-    <script>const CURRENT_USER = {{ current_user.get_id()|tojson }};</script>
-  </head>
-  <body class="bg-soft">
-    <header class="topbar">
-      <div class="container">
-        <a class="brand" href="{{ url_for('index') }}">🌊 Ocean Music</a>
-        <nav class="nav">
-          <form action="{{ url_for('search') }}" class="search" method="get">
-            <input name="q" placeholder="Search tracks or artists..." value="{{ q if q is defined else '' }}">
-            <button>🔎</button>
-          </form>
-          {% if current_user.is_authenticated %}
-            <a href="{{ url_for('upload') }}">Upload</a>
-            <a href="{{ url_for('profile', username=current_user.username) }}">{{ current_user.username }}</a>
-            <a href="{{ url_for('logout') }}">Log out</a>
-          {% else %}
-            <a href="{{ url_for('register') }}">Sign up</a>
-            <a href="{{ url_for('login') }}">Log in</a>
-          {% endif %}
-        </nav>
-      </div>
-    </header>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
 
-    <main class="container">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flashwrap">
-          {% for category, msg in messages %}
-            <div class="flash {{ category }}">{{ msg }}</div>
-          {% endfor %}
-        </div>
+  <title>{% block title %}PinkTunes{% endblock %}</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+  <!-- Favicon -->
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-left">
+      <a class="brand" href="{{ url_for('index') }}">PinkTunes</a>
+    </div>
+    <div class="nav-right">
+      <form class="nav-search" action="{{ url_for('search') }}" method="get" aria-label="Search tracks">
+        <input name="q" class="input nav-input" placeholder="Search tracks or artists…" value="{{ request.args.get('q','') }}">
+      </form>
+
+      {% if current_user.is_authenticated %}
+        <a class="nav-link" href="{{ url_for('upload') }}">Upload</a>
+        <a class="nav-link" href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
+        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+        <a class="nav-link" href="{{ url_for('register') }}">Sign up</a>
       {% endif %}
+    </div>
+  </header>
+
+  <main>
+    <div class="flash-holder">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category|default('info') }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
       {% endwith %}
-      {% block content %}{% endblock %}
-    </main>
+    </div>
 
-    <footer class="footer">
-      <div class="container">
-        <small>Made with ❤️ — Mahwii04, 2025.</small>
-      </div>
-    </footer>
+    {% block content %}{% endblock %}
+  </main>
 
-    <script src="{{ url_for('static', filename='js/player.js') }}"></script>
-  </body>
+  <footer class="footer">
+    <div class="container">
+      <small>© {{ now.year }} PinkTunes — All rights reserved.</small>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/player.js') }}"></script>
+</body>
 </html>
