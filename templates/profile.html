@@ -22,10 +22,16 @@
     <h3 style="margin-top:30px;">Tracks</h3>
     {% for track in tracks %}
         <div class="music-card">
-            <h4><a href="{{ url_for('track', track_id=track.id) }}" style="color:#ff69b4;">{{ track.title }}</a></h4>
-            <audio controls style="width:100%;">
-                <source src="{{ url_for('uploaded_file', filename=track.filename) }}" type="audio/mpeg">
+            {% if track.thumbnail %}
+                <img src="{{ url_for('static', filename='uploads/' + track.thumbnail) }}" alt="Thumbnail" class="track-thumbnail">
+            {% else %}
+                <img src="{{ url_for('static', filename='images/default-track.png') }}" alt="Default Thumbnail" class="track-thumbnail">
+            {% endif %}
+            <h3>{{ track.title }}</h3>
+            <audio controls>
+                <source src="{{ url_for('static', filename='uploads/' + track.filename) }}" type="audio/mpeg">
             </audio>
+            <p style="margin-top:10px;">{{ track.description }}</p>
         </div>
     {% else %}
         <p>No tracks uploaded yet.</p>
